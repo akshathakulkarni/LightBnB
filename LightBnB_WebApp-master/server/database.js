@@ -18,16 +18,30 @@ const pool = new Pool({
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithEmail = function(email) {
-  let user;
-  for (const userId in users) {
-    user = users[userId];
-    if (user.email.toLowerCase() === email.toLowerCase()) {
-      break;
-    } else {
-      user = null;
-    }
-  }
-  return Promise.resolve(user);
+  console.log('email=', email)
+  const queryString = `SELECT * FROM users WHERE email = $1;`;
+  const values = [email];
+  return pool
+    .query(queryString, values)
+    .then((result) => {
+      return result.rows[0] || null;
+    })
+    .catch((err) => {
+      console.log(err.message);
+      
+    });
+  // let user;
+  // console.log('email=', email)
+  // for (const userId in users) {
+  //   user = users[userId];
+  //   console.log(user.email)
+  //   if (user.email.toLowerCase() === email.toLowerCase()) {
+  //     break;
+  //   } else {
+  //     user = null;
+  //   }
+  // }
+  // return Promise.resolve(user);
 }
 exports.getUserWithEmail = getUserWithEmail;
 
@@ -37,7 +51,18 @@ exports.getUserWithEmail = getUserWithEmail;
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithId = function(id) {
-  return Promise.resolve(users[id]);
+  const queryString = `SELECT * FROM users WHERE id = $1;`;
+  const values = [id];
+  return pool
+    .query(queryString, values)
+    .then((result) => {
+      console.log('id result =', result.rows[0])
+      return result.rows[0] || null; 
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  //return Promise.resolve(users[id]);
 }
 exports.getUserWithId = getUserWithId;
 
@@ -48,10 +73,25 @@ exports.getUserWithId = getUserWithId;
  * @return {Promise<{}>} A promise to the user.
  */
 const addUser =  function(user) {
-  const userId = Object.keys(users).length + 1;
-  user.id = userId;
-  users[userId] = user;
-  return Promise.resolve(user);
+  //console.log('user data ', user);
+  const name = user.name;
+  const email = user.email;
+  const password = user.password;
+
+  const queryString = `INSERT INTO users(name, email, password) VALUES ($1, $2, $3) returning *;`;
+  return pool
+    .query(queryString, [name, email, password])
+    .then((result) => {
+      console.log(result.rows);
+      return result.rows;
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  // const userId = Object.keys(users).length + 1;
+  // user.id = userId;
+  // users[userId] = user;
+  // return Promise.resolve(user);
 }
 exports.addUser = addUser;
 
@@ -80,7 +120,7 @@ const getAllProperties = function(options, limit = 10) {
   return pool
     .query(`SELECT * FROM properties LIMIT $1`, [limit])
     .then((result) => {
-      console.log(result.rows[0]);
+      //console.log(result.rows);
       return result.rows;
     })
     .catch((err) => {

@@ -139,34 +139,34 @@ const getAllProperties = function(options, limit = 10) {
   SELECT properties.*, avg(property_reviews.rating) as average_rating
   FROM properties
   JOIN property_reviews ON properties.id = property_id
-  `;
-  console.log(options);
-  if (options.city && options.minimum_rating ) {
-    if (options.minimum_price_per_night && options.maximum_price_per_night) {
-      queryParams.push(`${options.city}`);
-      queryParams.push(`${options.minimum_price_per_night}`);
-      queryParams.push(`${options.maximum_price_per_night}`);
-      queryParams.push(`${options.minimum_rating}`);
-      queryString += `WHERE (city = $${queryParams.length - 3} OR cost_per_night BETWEEN $${queryParams.length - 2} AND $${queryParams.length - 1}) AND property_reviews.rating >= $${queryParams.length}`;
-    }
-  }
-  // if(options.city) {
-  //   queryParams.push(`${options.city}`);
-  //   queryString += `WHERE city = $${queryParams.length} `;
-  // }
-  // if(options.minimum_price_per_night && options.maximum_price_per_night) {
+  WHERE 1 = 1`;
+  // console.log(options);
+  // if (options.city && options.minimum_rating ) {
+  //   if (options.minimum_price_per_night && options.maximum_price_per_night) {
+  //     queryParams.push(`${options.city}`);
   //     queryParams.push(`${options.minimum_price_per_night}`);
   //     queryParams.push(`${options.maximum_price_per_night}`);
-  //     queryString += `AND cost_per_night BETWEEN $${queryParams.length - 1} AND $${queryParams.length})`;
+  //     queryParams.push(`${options.minimum_rating}`);
+  //     queryString += `WHERE (city = $${queryParams.length - 3} OR cost_per_night BETWEEN $${queryParams.length - 2} AND $${queryParams.length - 1}) AND property_reviews.rating >= $${queryParams.length}`;
+  //   }
   // }
-  // if (options.minimum_rating) {
-  //   queryParams.push(`${options.minimum_rating}`);
-  //   queryString += `AND property_reviews.rating >= $${queryParams.length}`;
-  // }
+  if(options.city) {
+    queryParams.push(`${options.city}`);
+    queryString += ` AND city = $${queryParams.length} `;
+  }
+  if(options.minimum_price_per_night && options.maximum_price_per_night) {
+      queryParams.push(`${options.minimum_price_per_night}`);
+      queryParams.push(`${options.maximum_price_per_night}`);
+      queryString += `AND cost_per_night BETWEEN $${queryParams.length - 1} AND $${queryParams.length})`;
+  }
+  if (options.minimum_rating) {
+    queryParams.push(`${options.minimum_rating}`);
+    queryString += `AND property_reviews.rating >= $${queryParams.length}`;
+  }
   
   if (options.owner_id) {
     queryParams.push(`${options.owner_id}`);
-    queryString += `WHERE properties.owner_id = $${queryParams.length}`;
+    queryString += ` AND properties.owner_id = $${queryParams.length}`;
   }
   
   queryParams.push(limit);
@@ -237,3 +237,16 @@ const addProperty = function(property) {
   // return Promise.resolve(property);
 }
 exports.addProperty = addProperty;
+
+const addReservation = function(reservation) {
+  /*
+   * Adds a reservation from a specific user to the database
+   */
+  return pool.query(`
+    INSERT INTO reservations (start_date, end_date, property_id, guest_id)
+    VALUES ($1, $2, $3, $4) RETURNING *;
+  `, [reservation.start_date, reservation.end_date, reservation.property_id, reservation.guest_id])
+  .then(res => res.rows[0])
+}
+
+exports.addReservation = addReservation;

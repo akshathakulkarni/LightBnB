@@ -152,6 +152,7 @@ exports.getIndividualReservation = getIndividualReservation;
 //  Updates an existing reservation with new information
 //
 const updateReservation = function(reservationData) {
+  console.log('reservationdata =', reservationData);
   // base string
   let queryString = `UPDATE reservations SET `;
   const queryParams = [];
@@ -175,6 +176,19 @@ const updateReservation = function(reservationData) {
 }
 
 exports.updateReservation = updateReservation;
+
+//
+//  Deletes an existing reservation
+//
+const deleteReservation = function(reservationId) {
+  const queryParams = [reservationId];
+  const queryString = `DELETE FROM reservations WHERE id = $1`;
+  return pool.query(queryString, queryParams)
+    .then(() => console.log("Successfully deleted!"))
+    .catch(() => console.error(err));
+}
+
+exports.deleteReservation = deleteReservation;
 
 /// Properties
 

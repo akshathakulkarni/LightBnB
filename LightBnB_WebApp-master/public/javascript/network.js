@@ -75,3 +75,11 @@ const submitReservation = function(data) {
     data,
   })
 }
+
+const updateReservation = function(data) {
+  return $.ajax({
+    method: "POST",
+    url: `/api/reservations/${data.reservation_id}`,
+    data,
+  })
+}

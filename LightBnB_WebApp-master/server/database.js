@@ -140,6 +140,14 @@ const getUpcomingReservations = function(guest_id, limit = 10) {
 
 exports.getUpcomingReservations = getUpcomingReservations;
 
+const getIndividualReservation = function(reservationId) {
+  const queryString = `SELECT * FROM reservations WHERE reservations.id = $1`;
+  return pool.query(queryString, [reservationId])
+    .then(res => res.rows[0]);
+}
+
+exports.getIndividualReservation = getIndividualReservation;
+
 /// Properties
 
 /**

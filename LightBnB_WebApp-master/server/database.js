@@ -148,6 +148,34 @@ const getIndividualReservation = function(reservationId) {
 
 exports.getIndividualReservation = getIndividualReservation;
 
+//
+//  Updates an existing reservation with new information
+//
+const updateReservation = function(reservationData) {
+  // base string
+  let queryString = `UPDATE reservations SET `;
+  const queryParams = [];
+  if (reservationData.start_date) {
+    queryParams.push(reservationData.start_date);
+    queryString += `start_date = $1`;
+    if (reservationData.end_date) {
+      queryParams.push(reservationData.end_date);
+      queryString += `, end_date = $2`;
+    }
+  } else {
+    queryParams.push(reservationData.end_date);
+    queryString += `end_date = $1`;
+  }
+  queryString += ` WHERE id = $${queryParams.length + 1} RETURNING *;`
+  queryParams.push(reservationData.reservation_id);
+  console.log(queryString);
+  return pool.query(queryString, queryParams)
+    .then(res => res.rows[0])
+    .catch(err => console.error(err));
+}
+
+exports.updateReservation = updateReservation;
+
 /// Properties
 
 /**

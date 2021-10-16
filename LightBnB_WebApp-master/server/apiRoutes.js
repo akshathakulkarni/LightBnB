@@ -46,7 +46,7 @@ module.exports = function(router, database) {
       res.send(e);
     })
   })
-  
+
   router.post('/properties', (req, res) => {
     const userId = req.session.userId;
     database.addProperty({...req.body, owner_id: userId})
@@ -73,6 +73,14 @@ module.exports = function(router, database) {
     } 
   })
 
-
+  // update an existing reservation
+  router.post('/reservations/:reservationId', (req, res) => {
+    const reservationId = req.params.reservationId;
+    database.updateReservation({...req.body, reservation_id: reservationId})
+    .then(reservation => {
+      res.send(reservation)
+    })
+  })
+  
   return router;
 }

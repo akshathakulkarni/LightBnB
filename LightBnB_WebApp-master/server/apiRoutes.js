@@ -61,6 +61,7 @@ module.exports = function(router, database) {
 
   router.post('/reservations', (req, res) => {
     const userId = req.session.userId;
+    
     if (userId) {
       database.addReservation({...req.body, guest_id: userId})
       .then(reservation => {
@@ -76,6 +77,7 @@ module.exports = function(router, database) {
   // update an existing reservation
   router.post('/reservations/:reservationId', (req, res) => {
     const reservationId = req.params.reservationId;
+    console.log('111', reservationId)
     database.updateReservation({...req.body, reservation_id: reservationId})
     .then(reservation => {
       res.send(reservation)
@@ -88,6 +90,22 @@ module.exports = function(router, database) {
     database.deleteReservation(reservationId);
   })
 
+  // get reviews by property
+  router.get('/reviews/:propertyId', (req, res) => {
+    const propertyId = req.params.propertyId
+    database.getReviewsByProperty(propertyId)
+    .then(reviews => {
+      res.send(reviews);
+    })
+  })
+
+  router.post('/reviews/:reservationId', (req, res) => {
+    const reservationId = req.params.reservationId;
+    database.addReview({...req.body})
+    .then(review => {
+      res.send(review);
+    })
+  })
 
   return router;
 }

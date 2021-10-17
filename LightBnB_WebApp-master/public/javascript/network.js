@@ -77,6 +77,7 @@ const submitReservation = function(data) {
 }
 
 const updateReservation = function(data) {
+  console.log('111', data);
   return $.ajax({
     method: "POST",
     url: `/api/reservations/${data.reservation_id}`,
@@ -88,5 +89,23 @@ const deleteReservation = function(data) {
   return $.ajax({
     method: "DELETE",
     url: `/api/reservations/${data.reservation_id}`
+  })
+  .then(() => {
+    $('.delete-button').closest('article').remove();
+  })
+}
+
+const getReviewsByProperty = function(propertyId) {
+  const url = `api/reviews/${propertyId}`;
+  return $.ajax({
+    url,
+  });
+}
+
+const submitReview = function(data) {
+  return $.ajax({
+    method: "POST",
+    url: `api/reviews/${data.reservationId}`,
+    data,
   })
 }

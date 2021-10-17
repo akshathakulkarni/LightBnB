@@ -11,9 +11,10 @@ $(() => {
     $logInForm.detach();
     $signUpForm.detach();
     $newReservationForm.detach();
-    //$('#reservation-details').detach();
+    $('#reservation-details').detach();
+    
 
-    let datatag = '';
+    let dataTag = '';
 
     switch (item) {
       case 'listings':
@@ -58,16 +59,16 @@ $(() => {
           $(dataTag).appendTo("#datatag");
           $(errorMessage).appendTo('#error-message');
           break;
-          case 'showReviews':
-            getReviewsByProperty(data)
-            .then(reviews => propertyReviews.addReviews(reviews))
-            $propertyReviews.appendTo($main);
-            break;
-            case 'newReview':
-            dataTag = `<h4>${data}</h4>`;
-            $newReviewForm.appendTo($main);
-            $(dataTag).appendTo("#datatag");
-            break;
+      case 'showReviews':
+        getReviewsByProperty(data)
+        .then(reviews => propertyReviews.addReviews(reviews))
+        $propertyReviews.appendTo($main);
+        break;
+      case 'newReview':
+        dataTag = `<h4>${data}</h4>`;
+        $newReviewForm.appendTo($main);
+        $(dataTag).appendTo("#datatag");
+        break;
       case 'error': {
         const $error = $(`<p>${arguments[1]}</p>`);
         $error.appendTo('body');

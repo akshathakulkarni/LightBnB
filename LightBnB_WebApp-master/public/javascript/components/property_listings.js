@@ -40,18 +40,20 @@ $(() => {
       $('.delete-button').on('click', function() {
         const idData = $(this).attr('id').substring(16);
         deleteReservation(idData)
+        
         .then(() => console.log('Success!'))
-        .catch(err => console.error(err));        
+        .catch(err => console.error(error));   
+        $(this).closest('article').remove();     
       })
       $('.add-review-button').on('click', function() {
         const idData = $(this).attr('id').substring(11);
         views_manager.show("newReview", idData);
       })
     } else {
-      $('.reserve-button').on('click', function() {
+      $(document).on('click','.reserve-button', function() {
         const idData = $(this).attr('id').substring(17);
         views_manager.show('newReservation', idData);
-      })
+      });
       $('.review_details').on('click', function() {
         const idData = $(this).attr('id').substring(15);
         views_manager.show('showReviews', idData);

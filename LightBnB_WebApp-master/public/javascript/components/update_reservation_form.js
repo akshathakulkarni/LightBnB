@@ -212,25 +212,6 @@ $(() => {
     }
   
     if ((startDate || endDate) && !errorMessage) {
-      const reservationId = $(this).find("#datatag h4").text();
-      const dataObj = { start_date: startDate, end_date: endDate, reservation_id: reservationId };
-      console.log(dataObj);
-    } else {
-      console.log(errorMessage);
-      // we can redisplay the form by pulling the information in the datatag!
-      const dataObj = {
-        id: $(this).find('#datatag-reservation-id').text(),
-        start_date: $(this).find('#datatag-start-date').text(),
-        end_date: $(this).find('#datatag-end-date').text(),
-        property_id: $(this).find('#datatag-property-id').text(),
-        error_message: errorMessage
-      }
-      views_manager.show('updateReservation', dataObj);
-    }
-  });
-
-  $('body').on('click', '#reservation-form__cancel', function() {
-    if ((startDate || endDate) && !errorMessage) {
       const reservationId = $(this).find("#datatag-reservation-id").text();
       const dataObj = { start_date: startDate, end_date: endDate, reservation_id: reservationId };
       updateReservation(dataObj)
@@ -252,7 +233,14 @@ $(() => {
         console.error(error);
         views_manager.show('listings');
       })
+
     }
+
+  });
+
+  $('body').on('click', '#reservation-form__cancel', function() {
+    views_manager.show('listings');
+    return false;
   });
 
 });
